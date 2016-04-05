@@ -38,13 +38,19 @@ public class Command {
 	};
 
 	public static enum type {
-		Move, Push, Pull
+		Move, Push, Pull, NoOp
 	};
 
 	public final type actType;
 	public final dir dir1;
 	public final dir dir2;
 
+	public Command() {
+		actType = type.NoOp;
+		dir1 = null;
+		dir2 = null;
+	}
+	
 	public Command(dir d) {
 		actType = type.Move;
 		dir1 = d;
@@ -60,7 +66,8 @@ public class Command {
 	public String toString() {
 		if (actType == type.Move)
 			return actType.toString() + "(" + dir1 + ")";
-
+		else if(actType == type.NoOp)
+			return actType.toString();
 		return actType.toString() + "(" + dir1 + "," + dir2 + ")";
 	}
 
