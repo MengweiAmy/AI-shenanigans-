@@ -1,4 +1,4 @@
-package atoms;
+package searchclient;
 
 public enum Color {
 	BLUE, 

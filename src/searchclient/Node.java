@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 
-import atoms.Position;
 import searchclient.Command.dir;
 import searchclient.Command.type;
 
@@ -16,6 +15,7 @@ public class Node {
 
 	public int agentRow;
 	public int agentCol;
+
 	public char[][] boxes = new char[SearchClient.MAX_ROW][SearchClient.MAX_COLUMN];
 	public char[][] goals = new char[SearchClient.MAX_ROW][SearchClient.MAX_COLUMN];
 
@@ -49,9 +49,10 @@ public class Node {
 				if (g > 0 && b != g) {
 					return false;
 				}
+
 			}
 		}
-		System.err.println("found goal state");
+		System.err.println("printer true");
 		return true;
 	}
 
@@ -61,11 +62,12 @@ public class Node {
 			// Determine applicability of action
 			int newAgentRow = this.agentRow + dirToRowChange(c.dir1);
 			int newAgentCol = this.agentCol + dirToColChange(c.dir1);
+
 			if (c.actType == type.Move) {
 				// Check if there's a wall or box on the cell to which the agent
 				// is moving
 				if (cellIsFree(newAgentRow, newAgentCol)) {
-					Node n = this.childNode();
+					Node n = this.ChildNode();
 					n.action = c;
 					n.agentRow = newAgentRow;
 					n.agentCol = newAgentCol;
@@ -78,7 +80,7 @@ public class Node {
 					int newBoxCol = newAgentCol + dirToColChange(c.dir2);
 					// .. and that new cell of box is free
 					if (cellIsFree(newBoxRow, newBoxCol)) {
-						Node n = this.childNode();
+						Node n = this.ChildNode();
 						n.action = c;
 						n.agentRow = newAgentRow;
 						n.agentCol = newAgentCol;
@@ -90,11 +92,11 @@ public class Node {
 			} else if (c.actType == type.Pull) {
 				// Cell is free where agent is going
 				if (cellIsFree(newAgentRow, newAgentCol)) {
-					int boxRow = agentRow + dirToRowChange(c.dir2);
-					int boxCol = agentCol + dirToColChange(c.dir2);
+					int boxRow = this.agentRow + dirToRowChange(c.dir2);
+					int boxCol = this.agentCol + dirToColChange(c.dir2);
 					// .. and there's a box in "dir2" of the agent
 					if (boxAt(boxRow, boxCol)) {
-						Node n = this.childNode();
+						Node n = this.ChildNode();
 						n.action = c;
 						n.agentRow = newAgentRow;
 						n.agentCol = newAgentCol;
@@ -110,9 +112,7 @@ public class Node {
 	}
 
 	private boolean cellIsFree(int row, int col) {
-		return (!SearchClient.walls.contains(new Position(row, col))
-//				!SearchClient.walls[row][col] 
-				&& this.boxes[row][col] == 0);
+		return (!SearchClient.walls[row][col] && this.boxes[row][col] == 0);
 	}
 
 	private boolean boxAt(int row, int col) {
@@ -132,7 +132,7 @@ public class Node {
 															// column (-1)
 	}
 
-	private Node childNode() {
+	private Node ChildNode() {
 		Node copy = new Node(this);
 		for (int row = 0; row < SearchClient.MAX_ROW; row++) {
 			// System.arraycopy( this.walls[row], 0, copy.walls[row], 0,
@@ -163,8 +163,8 @@ public class Node {
 		result = prime * result + Arrays.deepHashCode(goals);
 
 		/*
-		 * result = prime * result + Arrays.deepHashCode( SearchClient2.goals );
-		 * result = prime * result + Arrays.deepHashCode( SearchClient2.walls );
+		 * result = prime * result + Arrays.deepHashCode( SearchClient.goals );
+		 * result = prime * result + Arrays.deepHashCode( SearchClient.walls );
 		 */
 		return result;
 	}
@@ -187,16 +187,19 @@ public class Node {
 		}
 		if (!Arrays.deepEquals(goals, goals))
 			return false;
+
+		/*
+		 * if ( !Arrays.deepEquals( SearchClient.goals, SearchClient.goals ) )
+		 * return false; if ( !Arrays.deepEquals( SearchClient.walls,
+		 * SearchClient.walls ) ) return false;
+		 */
 		return true;
 	}
 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		for (int row = 0; row < SearchClient.MAX_ROW; row++) {
-			if (
-					!SearchClient.walls.contains(new Position(row, 0))
-//					!SearchClient.walls[row][0]
-							) {
+			if (!SearchClient.walls[row][0]) {
 				break;
 			}
 			for (int col = 0; col < SearchClient.MAX_COLUMN; col++) {
@@ -204,18 +207,18 @@ public class Node {
 					s.append(this.boxes[row][col]);
 				} else if (goals[row][col] > 0) {
 					s.append(goals[row][col]);
-				} else if(SearchClient.walls.contains(new Position(row, col))) {
+				} else if (SearchClient.walls[row][col]) {
 					s.append("+");
-//				} else if (SearchClient.walls[row][col]) {
-//					s.append("+");
 				} else if (row == this.agentRow && col == this.agentCol) {
 					s.append("0");
 				} else {
 					s.append(" ");
 				}
 			}
+
 			s.append("\n");
 		}
 		return s.toString();
 	}
+
 }
