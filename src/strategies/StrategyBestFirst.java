@@ -2,7 +2,7 @@ package strategies;
 
 import java.util.PriorityQueue;
 
-import searchclient.Heuristic;
+import heuristics.Heuristic;
 import searchclient.Node;
 
 public class StrategyBestFirst extends Strategy {
@@ -36,7 +36,6 @@ public class StrategyBestFirst extends Strategy {
 	}
 
 	public String toString() {
-		return "Best-first Search (PriorityQueue) using "
-				+ heuristic.toString();
+		return "Best-first Search (PriorityQueue) using " + heuristic.toString();
 	}
 }

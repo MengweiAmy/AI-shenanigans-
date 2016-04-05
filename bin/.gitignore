@@ -1,6 +1,13 @@
-/searchclient/
+/atoms/
+/gui.bat
+/heuristics/
 /levels/
+/readme-server.txt
 /sampleclients/
+/searchclient/
 /searchclient.bat
+/searchclient2/
+/searchclient2.bat
+/server.jar
 /strategies/
 *.class
