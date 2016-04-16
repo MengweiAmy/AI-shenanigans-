@@ -20,6 +20,7 @@ public class Node {
 
 	public int agentRow;
 	public int agentCol;
+	
 	public Map<Integer, Box> boxes;
 	public Map<Integer, Goal> goals;
 
@@ -46,7 +47,7 @@ public class Node {
 	public boolean isInitialState() {
 		return this.parent == null;
 	}
-
+	
 	public boolean isGoalState() {
 		boolean result = false;
 		for (Integer goalId : goals.keySet()) {
@@ -173,16 +174,26 @@ public class Node {
 		Node copy = new Node(this, this.agentId);
 		copy.boxes = new HashMap<Integer, Box>(this.boxes);
 		copy.goals = this.goals;
+		copy.agentCol = this.agentCol;
+		copy.agentRow = this.agentRow;
 		return copy;
 	}
 
-	public LinkedList<Node> extractPlan() {
+	public LinkedList<Node> extractPlan(Node node) {
 		LinkedList<Node> plan = new LinkedList<Node>();
 		Node n = this;
-		while (!n.isInitialState()) {
-			plan.addFirst(n);
-			n = n.parent;
+		if(node.parent == null) {
+			while (!n.isInitialState()) {
+				plan.addFirst(n);
+				n = n.parent;
+			}
+		}else {
+			while(!node.equals(n)) {
+				plan.addFirst(n);
+				n = n.parent;
+			}
 		}
+		
 		return plan;
 	}
 

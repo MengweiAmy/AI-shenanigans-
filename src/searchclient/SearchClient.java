@@ -1,8 +1,8 @@
 package searchclient;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import strategies.Strategy;
 import atoms.Agent;
 import atoms.Box;
 import atoms.Goal;
 import atoms.Position;
 import atoms.World;
-import strategies.Strategy;
 
 public class SearchClient {
 	public static int MAX_ROW = 0;
@@ -29,29 +29,8 @@ public class SearchClient {
 	public SearchClient() throws IOException {
 		precomputedGoalH = new HashMap<Goal, Byte[][]>(0);
 		colors = new HashMap<Character, String>(0);
-		in = new BufferedReader(new InputStreamReader(System.in));
-	}
-
-	public boolean update() throws IOException {
-		String jointAction = "[";
-//
-//		for (int i = 0; i < agents.size() - 1; i++)
-//			jointAction += agents.get(i).act() + ",";
-//
-//		jointAction += agents.get(agents.size() - 1).act() + "]";
-
-		// Place message in buffer
-		System.out.println(jointAction);
-		System.err.println(jointAction);
-		// Flush buffer
-		System.out.flush();
-
-		// Disregard these for now, but read or the server stalls when its
-		// output buffer gets filled!
-		String percepts = in.readLine();
-		if (percepts == null)
-			return false;
-		return true;
+		//in = new BufferedReader(new InputStreamReader(System.in));
+		in = new BufferedReader(new FileReader("/Users//sunmengwei//Documents//workspace//ProjectAI//src//levels//MAsimple2.lvl"));
 	}
 
 	public void init() throws IOException {
@@ -74,7 +53,7 @@ public class SearchClient {
 		}
 
 		// Read lines specifying level layout
-		while (!line.equals("")) {
+		while (line != null && !line.equals("")) {
 			messages.add(line);
 			for (int i = 0; i < line.length(); i++) {
 				char id = line.charAt(i);
@@ -122,6 +101,13 @@ public class SearchClient {
 					}
 				}
 			}
+			//Assume that agent 1 has higher priority
+			if(id == 1) {
+				agent.setPriority(0);
+			}else {
+				agent.setPriority(1);
+			}
+			
 		}
 		/* Needs to be modified such that it calculates for each agent */
 		for (Integer id : agents.keySet()) {
@@ -156,7 +142,7 @@ public class SearchClient {
 			}
 			Node leafNode = strategy.getAndRemoveLeaf();
 			if (leafNode.isGoalState()) 
-				return leafNode.extractPlan();
+				return leafNode.extractPlan(initialState);
 			strategy.addToExplored(leafNode);
 			for (Node n : leafNode.getExpandedNodes()) {
 				if (!strategy.isExplored(n) && !strategy.inFrontier(n)) {
@@ -166,4 +152,5 @@ public class SearchClient {
 			iterations++;
 		}
 	}
+
 }
