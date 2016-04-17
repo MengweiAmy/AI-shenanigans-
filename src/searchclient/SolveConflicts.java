@@ -246,7 +246,7 @@ public class SolveConflicts {
 		for (Integer bId : agen.initialState.boxes.keySet()) {
 			Box b = World.getInstance().getBoxes().get(bId);
 			if (b.getPosition().equals(new Position(row,col))) {
-				return true;
+				return false;
 			}
 		}
 		return true;

@@ -1,8 +1,8 @@
 package searchclient;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,8 +29,8 @@ public class SearchClient {
 	public SearchClient() throws IOException {
 		precomputedGoalH = new HashMap<Goal, Byte[][]>(0);
 		colors = new HashMap<Character, String>(0);
-		//in = new BufferedReader(new InputStreamReader(System.in));
-		in = new BufferedReader(new FileReader("/Users//sunmengwei//Documents//workspace//ProjectAI//src//levels//MAsimple2.lvl"));
+		in = new BufferedReader(new InputStreamReader(System.in));
+		//in = new BufferedReader(new FileReader("/Users//sunmengwei//Documents//workspace//ProjectAI//src//levels//MAsimple5.lvl"));
 	}
 
 	public void init() throws IOException {

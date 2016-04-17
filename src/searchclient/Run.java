@@ -80,15 +80,31 @@ public class Run {
 				break;
 			}else {
 				for (LinkedList<Node> solution : allSolutions) {
-					
-					
 					// set agent position
-					if(solution.size() == 0) {
-						isReplan  = solveAchievedAgentConflict(newSol,sb,i,solve);
-						if (i < allSolutions.size() - 1){
-							i++;
+					if(solution.size() == 0 && i == 0) {
+						Agent agent = null;
+						for(Integer inta:World.getInstance().getAgents().keySet()) {
+							LinkedList<Node> node = World.getInstance().getSolutionMap().get(inta);
+							if(node.size() == 0) {
+								agent = World.getInstance().getAgents().get(inta);
+							}
 						}
-						
+						Agent conl = checkRouteConflicts(agent);
+						if(conl != null) {
+							newSol = solve.communicate(agent, conl,true);
+							if(solve.isSenderMove()) {
+								executeAction(sb,newSol,i);
+							}else {
+								sb.append("NoOp");
+							}
+							//executeAction(sb,newSol,i);
+							isReplan = true;
+						}else {
+							sb.append("NoOp");
+							
+						}
+						sb.append(", ");
+						i++;
 						continue;
 					}
 					Node n = solution.peek(); 
@@ -125,42 +141,13 @@ public class Run {
 			}
 			sb.append("]");
 			System.out.println(sb.toString());
-			//System.err.println(sb.toString());
+			System.err.println(sb.toString());
 			if(isReplan) {
 				runSolutions(newSol);
 			}
 		}
 	}
 	
-	private static boolean solveAchievedAgentConflict(List<LinkedList<Node>> newSol,StringBuilder sb, int index,SolveConflicts solve) {//For MAsimple5
-		Agent agent = null;
-		boolean isReplan = false;
-		for(Integer inta:World.getInstance().getAgents().keySet()) {
-			LinkedList<Node> node = World.getInstance().getSolutionMap().get(inta);
-			if(node.size() == 0) {
-				agent = World.getInstance().getAgents().get(inta);
-			}
-		}
-		Agent conl = checkRouteConflicts(agent);
-		if(conl != null) {
-			newSol = solve.communicate(agent, conl,true);
-			if(solve.isSenderMove()) {
-				executeAction(sb,newSol,index);
-			}else {
-				sb.append("NoOp");
-				sb.append(", ");
-				index++;
-			}
-			//executeAction(sb,newSol,i);
-			isReplan = true;
-		}else {
-			sb.append("NoOp");
-			sb.append(", ");
-			index++;
-		}
-		return isReplan;
-			
-	}
 	/**
 	 * Check whether the achieved agent has occured the route of other agent
 	 * Then try to find the way out
